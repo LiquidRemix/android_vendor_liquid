@@ -148,25 +148,31 @@ PRODUCT_PACKAGES += \
 
 # Extra tools
 PRODUCT_PACKAGES += \
-    libsepol \
+    7z \
+    awk \
+    bash \
+    bzip2 \
+    curl \
+    fsck.ntfs \
     gdbserver \
+    htop \
+    lib7z \
+    libsepol \
     micro_bench \
     mke2fs \
+    mkfs.ntfs \
+    mount.ntfs \
     oprofiled \
+    pigz \
     powertop \
     sqlite3 \
     strace \
-    tune2fs
-
-# ExFAT support
-WITH_EXFAT ?= true
-ifeq ($(WITH_EXFAT),true)
-TARGET_USES_EXFAT := true
-PRODUCT_PACKAGES += \
-    mount.exfat \
-    fsck.exfat \
-    mkfs.exfat
-endif
+    tune2fs \
+    unrar \
+    unzip \
+    vim \
+    wget \
+    zip
 
 # Storage manager
 PRODUCT_PROPERTY_OVERRIDES += \
