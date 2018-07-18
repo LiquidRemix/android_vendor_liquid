@@ -127,7 +127,8 @@ PRODUCT_PACKAGES += \
     Eleven \
     Gallery2 \
     Jelly \
-    Launcher3
+    Launcher3 \
+    AlarmClock
 
 # Liquid packages
 PRODUCT_PACKAGES += \
