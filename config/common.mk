@@ -163,17 +163,15 @@ PRODUCT_PACKAGES += \
     powertop \
     sqlite3 \
     strace \
-    tune2fs
+    tune2fs \
+    fsck.ntfs \
+    mkfs.ntfs \
+    mount.ntfs
 
-# ExFAT support
-WITH_EXFAT ?= true
-ifeq ($(WITH_EXFAT),true)
-TARGET_USES_EXFAT := true
+# exFAT tools
 PRODUCT_PACKAGES += \
-    mount.exfat \
     fsck.exfat \
     mkfs.exfat
-endif
 
 # Storage manager
 PRODUCT_PROPERTY_OVERRIDES += \
