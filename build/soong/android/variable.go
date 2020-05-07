@@ -14,7 +14,14 @@ type Product_variables struct {
 		Overrides []string
 		Shared_libs []string
 	}
-	Should_skip_waiting_for_qsee struct {
+
+	Recovery_skip_ev_rel_input struct {
+		Cflags []string
+	}
+	Should_wait_for_qsee struct {
+		Cflags []string
+	}
+	Supports_extended_compress_format struct {
 		Cflags []string
 	}
 	Supports_hw_fde struct {
@@ -79,6 +86,8 @@ type ProductVariables struct {
 	Has_legacy_camera_hal1  *bool `json:",omitempty"`
 	Should_skip_waiting_for_qsee  *bool `json:",omitempty"`
 	Specific_camera_parameter_library  *string `json:",omitempty"`
+	Supports_extended_compress_format  *bool `json:",omitempty"`
+	Recovery_skip_ev_rel_input  *bool `json:",omitempty"`
 	Supports_hw_fde  *bool `json:",omitempty"`
 	Supports_hw_fde_perf  *bool `json:",omitempty"`
 	Supports_legacy_hw_fde  *bool `json:",omitempty"`
