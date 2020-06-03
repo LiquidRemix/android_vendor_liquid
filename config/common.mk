@@ -1,8 +1,6 @@
 # Allow vendor/extra to override any property by setting it first
 $(call inherit-product-if-exists, vendor/extra/product.mk)
 
-PRODUCT_BRAND ?= Liquid
-
 PRODUCT_BUILD_PROP_OVERRIDES += BUILD_UTC_DATE=0
 
 ifeq ($(PRODUCT_GMS_CLIENTID_BASE),)
@@ -209,94 +207,6 @@ endif
 PRODUCT_ENFORCE_RRO_EXCLUDED_OVERLAYS += vendor/liquid/overlay
 DEVICE_PACKAGE_OVERLAYS += vendor/liquid/overlay/common
 
-PRODUCT_VERSION_MAJOR = 10
-PRODUCT_VERSION_MINOR = 1
-PRODUCT_VERSION_MAINTENANCE :=
-
-ifeq ($(TARGET_VENDOR_SHOW_MAINTENANCE_VERSION),true)
-    LIQUID_VERSION_MAINTENANCE := $(PRODUCT_VERSION_MAINTENANCE)
-else
-    LIQUID_VERSION_MAINTENANCE := 0
-endif
-
-# Set LIQUID_BUILDTYPE from the env RELEASE_TYPE, for jenkins compat
-
-ifndef LIQUID_BUILDTYPE
-    ifdef RELEASE_TYPE
-        # Starting with "LIQUID_" is optional
-        RELEASE_TYPE := $(shell echo $(RELEASE_TYPE) | sed -e 's|^LIQUID_||g')
-        LIQUID_BUILDTYPE := $(RELEASE_TYPE)
-    endif
-endif
-
-# Filter out random types, so it'll reset to UNOFFICIAL
-ifeq ($(filter RELEASE NIGHTLY SNAPSHOT EXPERIMENTAL,$(LIQUID_BUILDTYPE)),)
-    LIQUID_BUILDTYPE :=
-endif
-
-ifdef LIQUID_BUILDTYPE
-    ifneq ($(LIQUID_BUILDTYPE), SNAPSHOT)
-        ifdef LIQUID_EXTRAVERSION
-            # Force build type to EXPERIMENTAL
-            LIQUID_BUILDTYPE := EXPERIMENTAL
-            # Remove leading dash from LIQUID_EXTRAVERSION
-            LIQUID_EXTRAVERSION := $(shell echo $(LIQUID_EXTRAVERSION) | sed 's/-//')
-            # Add leading dash to LIQUID_EXTRAVERSION
-            LIQUID_EXTRAVERSION := -$(LIQUID_EXTRAVERSION)
-        endif
-    else
-        ifndef LIQUID_EXTRAVERSION
-            # Force build type to EXPERIMENTAL, SNAPSHOT mandates a tag
-            LIQUID_BUILDTYPE := EXPERIMENTAL
-        else
-            # Remove leading dash from LIQUID_EXTRAVERSION
-            LIQUID_EXTRAVERSION := $(shell echo $(LIQUID_EXTRAVERSION) | sed 's/-//')
-            # Add leading dash to LIQUID_EXTRAVERSION
-            LIQUID_EXTRAVERSION := -$(LIQUID_EXTRAVERSION)
-        endif
-    endif
-else
-    # If LIQUID_BUILDTYPE is not defined, set to UNOFFICIAL
-    LIQUID_BUILDTYPE := UNOFFICIAL
-    LIQUID_EXTRAVERSION :=
-endif
-
-ifeq ($(LIQUID_BUILDTYPE), UNOFFICIAL)
-    ifneq ($(TARGET_UNOFFICIAL_BUILD_ID),)
-        LIQUID_EXTRAVERSION := -$(TARGET_UNOFFICIAL_BUILD_ID)
-    endif
-endif
-
-ifeq ($(LIQUID_BUILDTYPE), RELEASE)
-    ifndef TARGET_VENDOR_RELEASE_BUILD_ID
-        LIQUID_VERSION := $(PRODUCT_VERSION_MAJOR).$(PRODUCT_VERSION_MINOR).$(PRODUCT_VERSION_MAINTENANCE)$(PRODUCT_VERSION_DEVICE_SPECIFIC)-$(LIQUID_BUILD)
-    else
-        ifeq ($(TARGET_BUILD_VARIANT),user)
-            ifeq ($(LIQUID_VERSION_MAINTENANCE),0)
-                LIQUID_VERSION := $(PRODUCT_VERSION_MAJOR).$(PRODUCT_VERSION_MINOR)-$(TARGET_VENDOR_RELEASE_BUILD_ID)-$(LIQUID_BUILD)
-            else
-                LIQUID_VERSION := $(PRODUCT_VERSION_MAJOR).$(PRODUCT_VERSION_MINOR).$(LIQUID_VERSION_MAINTENANCE)-$(TARGET_VENDOR_RELEASE_BUILD_ID)-$(LIQUID_BUILD)
-            endif
-        else
-            LIQUID_VERSION := $(PRODUCT_VERSION_MAJOR).$(PRODUCT_VERSION_MINOR).$(PRODUCT_VERSION_MAINTENANCE)$(PRODUCT_VERSION_DEVICE_SPECIFIC)-$(LIQUID_BUILD)
-        endif
-    endif
-else
-    ifeq ($(LIQUID_VERSION_MAINTENANCE),0)
-        ifeq ($(LIQUID_VERSION_APPEND_TIME_OF_DAY),true)
-            LIQUID_VERSION := $(PRODUCT_VERSION_MAJOR).$(PRODUCT_VERSION_MINOR)-$(shell date -u +%Y%m%d_%H%M%S)-$(LIQUID_BUILDTYPE)$(LIQUID_EXTRAVERSION)-$(LIQUID_BUILD)
-        else
-            LIQUID_VERSION := $(PRODUCT_VERSION_MAJOR).$(PRODUCT_VERSION_MINOR)-$(shell date -u +%Y%m%d)-$(LIQUID_BUILDTYPE)$(LIQUID_EXTRAVERSION)-$(LIQUID_BUILD)
-        endif
-    else
-        ifeq ($(LIQUID_VERSION_APPEND_TIME_OF_DAY),true)
-            LIQUID_VERSION := $(PRODUCT_VERSION_MAJOR).$(PRODUCT_VERSION_MINOR).$(LIQUID_VERSION_MAINTENANCE)-$(shell date -u +%Y%m%d_%H%M%S)-$(LIQUID_BUILDTYPE)$(LIQUID_EXTRAVERSION)-$(LIQUID_BUILD)
-        else
-            LIQUID_VERSION := $(PRODUCT_VERSION_MAJOR).$(PRODUCT_VERSION_MINOR).$(LIQUID_VERSION_MAINTENANCE)-$(shell date -u +%Y%m%d)-$(LIQUID_BUILDTYPE)$(LIQUID_EXTRAVERSION)-$(LIQUID_BUILD)
-        endif
-    endif
-endif
-
 PRODUCT_EXTRA_RECOVERY_KEYS += \
     vendor/liquid/build/target/security/liquid
 
@@ -304,28 +214,8 @@ PRODUCT_EXTRA_RECOVERY_KEYS += \
 
 LIQUID_DISPLAY_VERSION := $(LIQUID_VERSION)
 
-ifneq ($(PRODUCT_DEFAULT_DEV_CERTIFICATE),)
-ifneq ($(PRODUCT_DEFAULT_DEV_CERTIFICATE),build/target/product/security/testkey)
-    ifneq ($(LIQUID_BUILDTYPE), UNOFFICIAL)
-        ifndef TARGET_VENDOR_RELEASE_BUILD_ID
-            ifneq ($(LIQUID_EXTRAVERSION),)
-                # Remove leading dash from LIQUID_EXTRAVERSION
-                LIQUID_EXTRAVERSION := $(shell echo $(LIQUID_EXTRAVERSION) | sed 's/-//')
-                TARGET_VENDOR_RELEASE_BUILD_ID := $(LIQUID_EXTRAVERSION)
-            else
-                TARGET_VENDOR_RELEASE_BUILD_ID := $(shell date -u +%Y%m%d)
-            endif
-        else
-            TARGET_VENDOR_RELEASE_BUILD_ID := $(TARGET_VENDOR_RELEASE_BUILD_ID)
-        endif
-        ifeq ($(LIQUID_VERSION_MAINTENANCE),0)
-            LIQUID_DISPLAY_VERSION := $(PRODUCT_VERSION_MAJOR).$(PRODUCT_VERSION_MINOR)-$(TARGET_VENDOR_RELEASE_BUILD_ID)-$(LIQUID_BUILD)
-        else
-            LIQUID_DISPLAY_VERSION := $(PRODUCT_VERSION_MAJOR).$(PRODUCT_VERSION_MINOR).$(LIQUID_VERSION_MAINTENANCE)-$(TARGET_VENDOR_RELEASE_BUILD_ID)-$(LIQUID_BUILD)
-        endif
-    endif
-endif
-endif
+# Branding
+include vendor/liquid/config/branding.mk
 
 -include $(WORKSPACE)/build_env/image-auto-bits.mk
 -include vendor/liquid/config/partner_gms.mk

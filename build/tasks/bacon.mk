@@ -24,7 +24,7 @@ BOLD := \e[1m
 UNDERLINE := \e[4m
 RESET := \e[0m
 
-LIQUID_TARGET_PACKAGE := $(PRODUCT_OUT)/liquid$(LIQUID_VERSION).zip
+LIQUID_TARGET_PACKAGE := $(PRODUCT_OUT)/liquid_remix-$(LIQUID_VERSION).zip
 
 .PHONY: otapackage liquid bacon
 otapackage: $(INTERNAL_OTA_PACKAGE_TARGET)
