@@ -217,6 +217,9 @@ LIQUID_DISPLAY_VERSION := $(LIQUID_VERSION)
 PRODUCT_PACKAGE_OVERLAYS += \
     vendor/liquid/overlay
 
+PRODUCT_PACKAGES += \
+    ThemePicker
+
 # Branding
 include vendor/liquid/config/branding.mk
 
