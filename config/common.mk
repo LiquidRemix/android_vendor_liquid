@@ -214,6 +214,9 @@ PRODUCT_EXTRA_RECOVERY_KEYS += \
 
 LIQUID_DISPLAY_VERSION := $(LIQUID_VERSION)
 
+PRODUCT_PACKAGE_OVERLAYS += \
+    vendor/liquid/overlay
+
 # Branding
 include vendor/liquid/config/branding.mk
 
